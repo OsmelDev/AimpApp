@@ -1,8 +1,7 @@
 import { useStore } from "@/context/StoreContext";
-import { Theme, useTheme } from "@/context/ThemeProvider";
+import { useTheme } from "@/context/ThemeProvider";
 import useAudioPlayer from "@/hooks/useAudioPlayer";
 import { themes } from "@/lib/themes";
-import { Song } from "@/types/types";
 import { Volume, Volume1, Volume2 } from "lucide-react";
 import React, { FC } from "react";
 import {
@@ -34,6 +33,16 @@ const AudioPlayer: FC<AudioPlayerProps> = ({
   } = useAudioPlayer();
   const { isPlaying, selectedSong } = useStore();
   const { theme } = useTheme();
+
+  const getVolIcon = (volume: number) => {
+    const iconProps = { size: 18, className: themes[theme].icon };
+
+    if (volume === 0) return <Volume {...iconProps} />;
+    if (volume === 100) return <Volume2 {...iconProps} />;
+
+    return <Volume1 {...iconProps} />;
+  };
+
   return (
     <div className="flex flex-col max-w-full h-full">
       <div
@@ -80,15 +89,7 @@ const AudioPlayer: FC<AudioPlayerProps> = ({
         className="flex justify-center items-center 
               md:min-h-auto md:flex-row md:justify-center md:items-center md:space-x-3  "
       >
-        {volume === 0 ? (
-          <Volume size={18} className={`${themes[theme].icon}`} />
-        ) : volume === 50 || volume <= 50 || volume <= 99 ? (
-          <Volume1 size={18} className={`${themes[theme].icon}`} />
-        ) : (
-          volume === 100 && (
-            <Volume2 size={18} className={`${themes[theme].icon}`} />
-          )
-        )}
+        {getVolIcon(volume)}
         <input
           type="range"
           min="0"
